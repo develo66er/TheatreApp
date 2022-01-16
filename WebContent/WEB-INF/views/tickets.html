@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<link href="static/css/style.css" th:href="@{static/css/style.css}"
+	rel="stylesheet" type="text/css" media="all" />
+</head>
+<body>
+	<div>
+		<div th:include="menu" th:remove="tag"></div>
+		<div th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+			<div class="add-form-container">
+				<form th:action="@{/add-tickets}" th:object="${ticket}"
+					method="post">
+					<label for="sessionId">Название сеанса : </label> <select
+						name="sessionId" required>
+						<option th:each="ss : ${sessions}" th:value="${{ss.id}}"
+							th:text="${{ss.performance}}+' : '+${{ss.startDateTime}}"></option>
+					</select> <label for="hallId">Зал:</label> <select id="hallId" name="hallId"
+						th:onchange="getMax(this.value,[[${tickets}]]);" required>
+						<option value="0">выберите зал :</option>
+						<option th:each="hh : ${halls}" th:value="${{hh.id}}"
+							th:text="${{hh.name}}"></option>
+					</select> <label for="rowNumber">Номер ряда : </label> <input id="rowNumber"
+						type="number" name="rowNumber" min="0" step="1" required>
+					<label for="seatNumber">Место в ряду : </label> <input
+						id="seatNumber" type="number" name="seatNumber" min="0" step="1"
+						required> <label for="price">Цена : </label> <input
+						id="price" type="number" name="price" min="0.0" step="0.1"
+						required> <input type="submit" value="добавить билет" />
+				</form>
+			</div>
+		</div>
+		<div>
+			<span th:text="${errMsg}" style="color: red"></span>
+		</div>
+		<div class="block">
+			<div>
+				<span th:text="${ticketsErrMsg}" style="color: red"></span>
+			</div>
+			<div th:each="tt : ${tickets}" class="block-box"
+				th:unless="${ticketsErrMsg}">
+				<h2 th:text="${{tt.performance}}"></h2>
+				<h3 th:text="${{tt.hall.name}}"></h3>
+				<h4
+					th:text="'ряд: '+${{tt.seats.rowNumber}}+',  место: '+${{tt.seats.seatNumber}}"></h4>
+				<div
+					th:text="'Начало: '+${{#dates.format(tt.session.startDateTime,'dd-MM-yyyy hh:mm:ss')}}"></div>
+				<div th:text="'Длительность: '+${{tt.session.duration}}+' мин.'"></div>
+				<div th:text="'Стоимость: '+${{tt.price}}+' руб.'"></div>
+				<div th:if="${#authorization.expression('hasRole(''ROLE_USER'')')}">
+
+					<a class="edit-link" th:href=@{/add-to-cart(ticket_id=${{tt.id}})}>добавить
+						в корзину</a>
+
+				</div>
+				<div th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+					<div class="edit-container">
+						<div>
+							<a th:href=@{/delete-ticket(id=${{tt.id}})}>удалить</a>
+						</div>
+						<div>
+							<a href="#" th:id="'edit-form-link-'+${{tt.id}}"
+								th:onclick="'showTicketsEditForm('+${tt.id}+')'">редактировать</a>
+						</div>
+						<div></div>
+					</div>
+					<div class="edit-form-container">
+						<form th:id="'tickets-edit-form-'+${{tt.id}}" class="edit-form"
+							th:action="@{/edit-ticket}" th:object="${ticket}" method="post">
+							<input type="hidden" id="ticketId" name="id"
+								th:value="${{tt.id}}" /> <input type="hidden" id="seatId"
+								name="seatId" th:value="${{tt.seatId}}" /> <input type="hidden"
+								name="sessionId" th:value="${{tt.sessionId}}" /> <input
+								type="hidden" id="hallId" name="hallId"
+								th:value="${{tt.hall.id}}" /> <label for="rowNumber">Номер
+								ряда : </label> <input id="rowNumber" type="number" name="rowNumber"
+								min="0" step="1" required> <label for="seatNumber">Место
+								в ряду : </label> <input id="seatNumber" type="number" name="seatNumber"
+								min="0" step="1" required> <label for="price">Цена
+								: </label> <input id="price" type="number" name="price" min="0.0"
+								step="0.1" required> <input type="submit"
+								value="редактировать билет" /> <a href="#"
+								th:onclick="'hideTicketsEditForm('+${tt.id}+')'">отменить</a>
+						</form>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript" th:src="@{static/js/script.js}"></script>
+</head>
+</html>

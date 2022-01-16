@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<link href="static/css/style.css" th:href="@{static/css/style.css}"
+	rel="stylesheet" type="text/css" media="all" />
+</head>
+<body>
+	<div>
+		<div th:include="menu" th:remove="tag"></div>
+		<div th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+			<div class="add-form-container">
+				<form th:action="@{/add-session}" th:object="${session}"
+					method="post">
+					<label for="name">Название представления: </label> <select
+						th:field="*{performanceId}" name="name" required>
+						<option th:each="pp : ${performances}" th:value="${{pp.id}}"
+							th:text="${{pp.name}}"></option>
+					</select> <label for="startDateTime">Начало: <span
+						th:if="${param.error}" th:text="${param.error}" style="color: red"></span></label>
+
+					<input type="datetime-local" th:field="*{startDateTime}"
+						name="startDateTime" required /> <label for="duration">Длительность:
+					</label> <input type="number" th:field="*{duration}" step="1" min="0"
+						name="duration" required /> <input type="submit"
+						value="добавить сеанс" />
+				</form>
+			</div>
+		</div>
+		<div>
+			<form th:action="@{/filter-session}" method="post">
+				<input type="date" name="filterDate" /> <select
+					name="performanceId">
+					<option th:each="pp : ${performances}" th:value="${{pp.id}}"
+						th:text="${{pp.name}}"></option>
+				</select> <input type="submit" value="фильтровать по дате" name="date-filter" />
+				<input type="submit" value="фильтровать по представлению"
+					name="performance-filter" /> <input type="submit"
+					value="показать все" name="undo-filter" />
+			</form>
+		</div>
+		<div class="block">
+			<div th:each="ss : ${sessions}" class="block-box">
+				<div th:text="'Название представления: '+${{ss.performance.name}}"></div>
+				<div
+					th:text="'Начало: '+${{#dates.format(ss.startDateTime,'dd-MM-yyyy hh:mm:ss')}}"></div>
+				<div th:text="'Длительность: '+${{ss.duration}}+' мин.'"></div>
+				<div th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+					<div class="edit-container">
+						<div>
+							<a th:href=@{/delete-session(id=${{ss.id}})}>удалить</a>
+						</div>
+						<div>
+							<a href="#" th:id="'edit-form-link-'+${{ss.id}}"
+								th:onclick="'showSessionEditForm('+${ss.id}+')'">редактировать</a>
+						</div>
+					</div>
+					<div class="edit-form-container">
+						<form th:id="'session-edit-form-'+${{ss.id}}" th:class="edit-form"
+							th:action="@{/edit-session}" th:object="${session}" method="post">
+							<input type="hidden" name="id" th:value="${{ss.id}}" /> <input
+								type="hidden" name="oldPerformanceId"
+								th:value="${{ss.performanceId}}" /> <label for="performanceId">Название
+								представления: </label> <select name="performanceId">
+								<option th:each="pp : ${performances}" th:value="${{pp.id}}"
+									th:text="${{pp.name}}" th;selected=${pp.id==ss.performance.id}></option>
+							</select> <label for="startDateTime">Начало: </label> <input
+								type="datetime" name="startDateTime"
+								th:value="${{#dates.format(ss.startDateTime,'yyyy-MM-dd hh:mm:ss')}}" />
+							<label for="duration">Длительность: </label> <input type="number"
+								name="duration" th:value="${{ss.duration}}" /> <input
+								type="submit" value="редактировать сеанс" /> <a href="#"
+								th:onclick="'hideSessionEditForm('+${ss.id}+')'">отменить</a>
+						</form>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+</body>
+<script type="text/javascript" th:src="@{static/js/script.js}"></script>
+</head>
+</html>

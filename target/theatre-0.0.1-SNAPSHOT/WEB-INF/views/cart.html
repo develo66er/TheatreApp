@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+
+<link href="static/css/style.css" th:href="@{static/css/style.css}"
+	rel="stylesheet" type="text/css" media="all" />
+<body>
+	<div>
+		<div th:include="menu" th:remove="tag"></div>
+
+		<div class="block">
+			
+					<b><span th:text="${errMsg}" style="color: red"></span></b>
+			
+			
+			<div th:unless="${errMsg}" th:each="tt : ${tickets}" class="block-box">
+				<h2 th:text="${{tt.performance}}"></h2>
+				<h3 th:text="${{tt.hall.name}}"></h3>
+				<h4
+					th:text="'ряд: '+${{tt.seats.rowNumber}}+',  место: '+${{tt.seats.seatNumber}}"></h4>
+				<div
+					th:text="'Начало: '+${{#dates.format(tt.session.startDateTime,'dd-MM-yyyy hh:mm:ss')}}"></div>
+				<div th:text="'Длительность: '+${{tt.session.duration}}+' мин.'"></div>
+				<div th:text="'Стоимость: '+${{tt.price}}+' руб.'"></div>
+				<div class="edit-container">
+					<a class="edit-link"
+						th:href=@{/remove-cart-item(ticket_id=${{tt.id}})}>убрать из
+						корзины</a>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</body>
+<script type="text/javascript" th:src="@{static/js/script.js}"></script>
+</head>
+</html>

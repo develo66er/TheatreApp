@@ -1,0 +1,59 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>login</title>
+<style type="text/css">
+form input{
+	margin: 10px;
+}
+form input[type=text],form input[type=password]{
+	padding: 10px;
+	color: #ce5c00;
+	border: 1px solid #e9b96e;
+}
+form input[type=submit], form input[type=submit]:visited{
+	background-color: #e9b96e;
+	color:white;
+	border: 1px solid #e9b96e;
+	padding: 10px;
+	width: 40%;
+}
+
+form input[type=submit]:hover{
+	background-color: #f4c730;
+	color:#ce5c00;
+	
+}
+
+.block {
+	border: 1px solid #f4c730;
+	border-radius: 10px;
+	margin: 20px;
+	padding: 20px;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+form{
+	padding:20px;
+	margin:20px;
+}
+label{
+	display: block;
+	color:#cc0000;
+}
+</style>
+</head>
+<body>
+	<div class="block">
+		<p th:if="${param.error}" style="color: red">Bad Credentials</p>
+		<form action="login" method="POST">
+			<label for="username">User Name :</label> <input type="text" name="username" required /> 
+			<label for="password">Password: </label><input type="password" name="password" required /> <br />
+			<br /> <input type="submit" value="Login" />
+		</form>
+	</div>
+
+</body>
+</html>

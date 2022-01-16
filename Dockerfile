@@ -1,0 +1,3 @@
+# we are extending everything from tomcat:8.0 image ...
+FROM sonodar/jdk8-tomcat8
+ADD target/theatre-0.0.1-SNAPSHOT.war  /opt/tomcat/webapps/theatre.war

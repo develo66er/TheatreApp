@@ -1,0 +1,1 @@
+<nav><div class="menu"><div><a href="/theatre/">ПРЕДСТАВЛЕНИЯ</a>|<a href="/theatre/sessions">СЕАНСЫ</a>|<a href="/theatre/tickets">БИЛЕТЫ</a></div><div><a th:if="${#authorization.expression('hasRole(''ROLE_USER'')')}" href="/theatre/cart">КОРЗИНА</a><a href="/theatre/logout">LOGOUT <span>[[${#httpServletRequest.remoteUser}]]</span> </a></div></div></nav>

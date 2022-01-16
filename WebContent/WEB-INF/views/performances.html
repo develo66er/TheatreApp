@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<link href="static/css/style.css" th:href="@{static/css/style.css}"
+	rel="stylesheet" type="text/css" media="all" />
+</head>
+<body>
+	<div>
+		<div th:include="menu" th:remove="tag"></div>
+		<div th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+			<div class="add-form-container">
+				<form th:action="@{/add-performance}" th:object="${performance}"
+					method="post">
+
+					<label for="name">Название: </label> <input type="text"
+						th:field="*{name}" name="name" required /> <label for="startDate">Дата
+						начала: </label> <input type="date" th:field="*{startDate}"
+						name="startDate" required /> <label for="endDate">Дата
+						конца: </label> <input type="date" th:field="*{endDate}" name="endDate"
+						required /> <input type="submit" value="добавить представление" />
+
+				</form>
+			</div>
+		</div>
+		<div class="block">
+			<div th:each="pf : ${performances}" class="block-box">
+				<div th:text="'Название: '+${{pf.name}}"></div>
+				<div th:text="'Дата начала: '+${{pf.startDate}}"></div>
+				<div th:text="'Дата конца: '+${{pf.endDate}}"></div>
+				<div th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+					<div class="edit-container">
+						<div>
+							<a class="edit-link"
+								th:href=@{/delete-performance(id=${{pf.id}})}>удалить</a>
+						</div>
+						<div>
+							<a class="edit-link" th:id="'edit-form-link-'+${{pf.id}}"
+								href="#" th:onclick="'showEditForm('+${pf.id}+')'">редактировать</a>
+
+						</div>
+					</div>
+					<div class="edit-form-container">
+						<form th:id="'edit-form-'+${{pf.id}}" th:class="edit-form"
+							th:action="@{/edit-performance}" th:object="${performance}"
+							method="post">
+							<input type="text" name="name" th:value="${{pf.name}}" required />
+							<input type="hidden" name="id" th:value="${{pf.id}}" /> <input
+								type="date" name="startDate" th:value="${{pf.startDate}}"
+								required /> <input type="date" name="endDate"
+								th:value="${{pf.endDate}}" required /> <input type="submit"
+								value="редактировать представление" /> <a href="#"
+								th:onclick="'hideEditForm('+${pf.id}+')'">отменить</a>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</body>
+<script type="text/javascript" th:src="@{static/js/script.js}"></script>
+</head>
+</html>
